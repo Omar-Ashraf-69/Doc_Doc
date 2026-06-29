@@ -1,4 +1,5 @@
 import 'package:doc_doc/core/routing/routes.dart';
+import 'package:doc_doc/features/login/views/login_view.dart';
 import 'package:doc_doc/features/on_boarding/views/on_boarding_view.dart';
 import 'package:flutter/material.dart';
 
@@ -9,6 +10,8 @@ class AppRouter {
     switch (settings.name) {
       case Routes.onBoarding:
         return MaterialPageRoute(builder: (_) => const OnBoardingView());
+      case Routes.login:
+        return MaterialPageRoute(builder: (_) => const LoginView());
       default:
         return null;
     }
