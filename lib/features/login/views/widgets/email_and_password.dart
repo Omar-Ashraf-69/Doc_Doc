@@ -1,13 +1,15 @@
 import 'package:doc_doc/core/helpers/app_regex.dart';
 import 'package:doc_doc/core/widgets/app_text_form_field.dart';
+import 'package:doc_doc/features/login/logic/login_cubit.dart';
 import 'package:doc_doc/features/login/views/widgets/password_validations.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/helpers/spacing.dart';
 
 class EmailAndPassword extends StatefulWidget {
-  const EmailAndPassword({super.key, required this.formKey});
-  final Key formKey;
+  const EmailAndPassword({super.key, this.showValidatingPassword = false});
+  final bool showValidatingPassword;
   @override
   State<EmailAndPassword> createState() => _EmailAndPasswordState();
 }
@@ -26,7 +28,7 @@ class _EmailAndPasswordState extends State<EmailAndPassword> {
   @override
   void initState() {
     super.initState();
-    passwordController = TextEditingController();
+    passwordController = context.read<LoginCubit>().passwordController;
     setupPasswordControllerListener();
   }
 
@@ -47,7 +49,7 @@ class _EmailAndPasswordState extends State<EmailAndPassword> {
   @override
   Widget build(BuildContext context) {
     return Form(
-      key: widget.formKey,
+      key: context.read<LoginCubit>().formKey,
       child: Column(
         children: [
           AppTextFormField(
@@ -59,7 +61,7 @@ class _EmailAndPasswordState extends State<EmailAndPassword> {
                 return 'Please enter a valid email';
               }
             },
-            controller: TextEditingController(),
+            controller: context.read<LoginCubit>().emailController,
           ),
           verticalSpace(18),
           AppTextFormField(
@@ -82,14 +84,18 @@ class _EmailAndPasswordState extends State<EmailAndPassword> {
               }
             },
           ),
-          verticalSpace(24),
-          PasswordValidations(
-            hasLowerCase: hasLowercase,
-            hasUpperCase: hasUppercase,
-            hasSpecialCharacters: hasSpecialCharacters,
-            hasNumber: hasNumber,
-            hasMinLength: hasMinLength,
-          ),
+          widget.showValidatingPassword
+              ? verticalSpace(24)
+              : const SizedBox.shrink(),
+          widget.showValidatingPassword
+              ? PasswordValidations(
+                  hasLowerCase: hasLowercase,
+                  hasUpperCase: hasUppercase,
+                  hasSpecialCharacters: hasSpecialCharacters,
+                  hasNumber: hasNumber,
+                  hasMinLength: hasMinLength,
+                )
+              : const SizedBox.shrink(),
         ],
       ),
     );

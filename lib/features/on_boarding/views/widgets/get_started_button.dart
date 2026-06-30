@@ -1,5 +1,6 @@
-
+import 'package:doc_doc/core/helpers/constants.dart';
 import 'package:doc_doc/core/helpers/extensions.dart';
+import 'package:doc_doc/core/helpers/shared_pref_helper.dart';
 import 'package:doc_doc/core/routing/routes.dart';
 import 'package:doc_doc/core/theming/colors.dart';
 import 'package:doc_doc/core/theming/styles.dart';
@@ -13,6 +14,7 @@ class GetStartedButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return ElevatedButton(
       onPressed: () {
+        SharedPrefHelper.setData(SharedPrefKeys.isFirstTime, true);
         context.pushReplacementNamed(Routes.login);
         // Navigator.pushReplacementNamed(context, '/login');
       },

@@ -1,17 +1,21 @@
 import 'package:doc_doc/core/helpers/extensions.dart';
 import 'package:doc_doc/core/helpers/spacing.dart';
+import 'package:doc_doc/core/routing/routes.dart';
+import 'package:doc_doc/core/theming/colors.dart';
 import 'package:doc_doc/core/theming/styles.dart';
 import 'package:doc_doc/core/widgets/app_text_button.dart';
+import 'package:doc_doc/features/login/logic/login_cubit.dart';
+import 'package:doc_doc/features/login/logic/login_state.dart';
 import 'package:doc_doc/features/login/views/widgets/dont_have_account_text.dart';
 import 'package:doc_doc/features/login/views/widgets/email_and_password.dart';
 import 'package:doc_doc/features/login/views/widgets/terms_and_conditions_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class LoginView extends StatelessWidget {
-  LoginView({super.key});
+  const LoginView({super.key});
 
-  final formkey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,32 +33,31 @@ class LoginView extends StatelessWidget {
                   style: TextStyles.font14GrayRegular,
                 ),
                 verticalSpace(36),
-                Form(
-                  child: Column(
-                    children: [
-                      EmailAndPassword(formKey: formkey),
-                      verticalSpace(24),
-                      Align(
-                        alignment: AlignmentDirectional.centerEnd,
-                        child: Text(
-                          'Forgot Password?',
-                          style: TextStyles.font13BlueRegular,
-                        ),
+                Column(
+                  children: [
+                    const EmailAndPassword(),
+                    verticalSpace(24),
+                    Align(
+                      alignment: AlignmentDirectional.centerEnd,
+                      child: Text(
+                        'Forgot Password?',
+                        style: TextStyles.font13BlueRegular,
                       ),
-                      verticalSpace(40),
-                      AppTextButton(
-                        buttonText: "Login",
-                        textStyle: TextStyles.font16WhiteSemiBold,
-                        onPressed: () {
-                          validateThenDoLogin(context);
-                        },
-                      ),
-                      verticalSpace(16),
-                      const TermsAndConditionsText(),
-                      verticalSpace(60),
-                      const DontHaveAccountText(),
-                    ],
-                  ),
+                    ),
+                    verticalSpace(40),
+                    AppTextButton(
+                      buttonText: "Login",
+                      textStyle: TextStyles.font16WhiteSemiBold,
+                      onPressed: () {
+                        validateThenDoLogin(context);
+                      },
+                    ),
+                    verticalSpace(16),
+                    const TermsAndConditionsText(),
+                    verticalSpace(60),
+                    const DontHaveAccountText(),
+                    LoginBlocListener(),
+                  ],
                 ),
               ],
             ),
@@ -65,30 +68,82 @@ class LoginView extends StatelessWidget {
   }
 
   void validateThenDoLogin(BuildContext context) {
-    if (formkey.currentState!.validate()) {
+    if (context.read<LoginCubit>().formKey.currentState!.validate()) {
       // do login
-      showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            icon: const Icon(Icons.fork_right, color: Colors.red, size: 32),
-            content: Text(
-              "Login Done",
-              textAlign: TextAlign.center,
-              style: TextStyles.font15DarkBlueMedium,
-            ),
-            actionsAlignment: MainAxisAlignment.center,
-            actions: [
-              TextButton(
-                onPressed: () {
-                  context.pop();
-                },
-                child: Text('Got it', style: TextStyles.font14BlueSemiBold),
-              ),
-            ],
-          );
-        },
-      );
+      context.read<LoginCubit>().login();
+      // showDialog(
+      //   context: context,
+      //   builder: (context) {
+      //     return AlertDialog(
+      //       icon: const Icon(Icons.fork_right, color: Colors.red, size: 32),
+      //       content: Text(
+      //         "Login Done",
+      //         textAlign: TextAlign.center,
+      //         style: TextStyles.font15DarkBlueMedium,
+      //       ),
+      //       actionsAlignment: MainAxisAlignment.center,
+      //       actions: [
+      //         TextButton(
+      //           onPressed: () {
+      //             context.pop();
+      //           },
+      //           child: Text('Got it', style: TextStyles.font14BlueSemiBold),
+      //         ),
+      //       ],
+      //     );
+      //   },
+      // );
     }
+  }
+}
+
+class LoginBlocListener extends StatelessWidget {
+  const LoginBlocListener({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocListener<LoginCubit, LoginState>(
+      listenWhen: (previous, current) =>
+          current is Loading || current is Success || current is Failure,
+      listener: (context, state) {
+        state.whenOrNull(
+          loading: () {
+            showDialog(
+              context: context,
+              builder: (context) => const Center(
+                child: CircularProgressIndicator(color: ColorsManager.mainBlue),
+              ),
+            );
+          },
+          success: (loginResponse) {
+            context.pop();
+            context.pushReplacementNamed(Routes.home);
+          },
+          error: (error) {
+            setupErrorState(context, error);
+          },
+        );
+      },
+      child: const SizedBox.shrink(),
+    );
+  }
+
+  void setupErrorState(BuildContext context, String error) {
+    context.pop();
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        icon: const Icon(Icons.error, color: Colors.red, size: 32),
+        content: Text(error, style: TextStyles.font15DarkBlueMedium),
+        actions: [
+          TextButton(
+            onPressed: () {
+              context.pop();
+            },
+            child: Text('Got it', style: TextStyles.font14BlueSemiBold),
+          ),
+        ],
+      ),
+    );
   }
 }
