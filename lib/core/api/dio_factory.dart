@@ -8,16 +8,16 @@ class DioFactory {
 
   static Dio? _dio;
 
-  static Dio getDio() {
+  static Future<Dio> getDio() async {
     Duration timeOut = const Duration(seconds: 30);
 
     _dio ??= Dio(BaseOptions(connectTimeout: timeOut, receiveTimeout: timeOut));
-    addDioHeaders();
+    await addDioHeaders();
     addDioInterceptor();
     return _dio!;
   }
 
-  static void addDioHeaders() async {
+  static Future<void> addDioHeaders() async {
     _dio?.options.headers = {
       'Accept': 'application/json',
       'Authorization':
@@ -35,6 +35,9 @@ class DioFactory {
         requestBody: true,
         requestHeader: true,
         responseHeader: true,
+        error: true,
+        compact: true,
+        maxWidth: 90,
       ),
     );
   }

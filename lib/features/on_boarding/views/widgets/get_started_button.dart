@@ -1,4 +1,3 @@
-
 import 'package:doc_doc/core/helpers/extensions.dart';
 import 'package:doc_doc/core/routing/routes.dart';
 import 'package:doc_doc/core/theming/colors.dart';
