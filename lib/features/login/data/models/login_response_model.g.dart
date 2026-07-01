@@ -16,13 +16,6 @@ LoginResponseModel _$LoginResponseModelFromJson(Map<String, dynamic> json) =>
       statusCode: (json['code'] as num?)?.toInt(),
     );
 
-Map<String, dynamic> _$LoginResponseModelToJson(LoginResponseModel instance) =>
-    <String, dynamic>{
-      'message': instance.message,
-      'data': instance.userData,
-      'status': instance.status,
-      'code': instance.statusCode,
-    };
 
 UserData _$UserDataFromJson(Map<String, dynamic> json) => UserData(
   userName: json['username'] as String?,
