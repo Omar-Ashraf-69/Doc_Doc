@@ -32,6 +32,7 @@ jobs:
 
       - name: Analyze code
         run: flutter analyze
+
       - name: Create Firebase service account
         working-directory: android
         run: |
@@ -39,9 +40,11 @@ jobs:
           cat > fastlane/firebase_service_account.json <<'EOF'
           ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
           EOF
+
       - name: Distribute APK via Firebase
         env:
           APP_ID: ${{ secrets.APP_ID }}
+          SERVICE_CREDENTIALS_FILE: fastlane/firebase_service_account.json
         run: |
           bundle exec fastlane android distribute
         working-directory: android
