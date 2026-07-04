@@ -6,7 +6,7 @@ platform :android do
     sh "flutter clean"
     sh "flutter build apk --release --flavor prod -t lib/main_prod.dart"
     firebase_app_distribution(
-    app: "1:584383532948:android:077ad9cf8df152e4c18981",
+    app: ENV["APP_ID"],
     service_credentials_file: "../fastlane/firebase_service_account.json",
     android_artifact_type: "APK",
     android_artifact_path: "../build/app/outputs/flutter-apk/app-prod-release.apk",
