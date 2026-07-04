@@ -21,24 +21,19 @@ class SharedPrefHelper {
   }
 
   /// Saves a [value] with a [key] in the SharedPreferences.
-  static Future<Null> setData(String key, value) async {
-    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    debugPrint("SharedPrefHelper : setData with key : $key and value : $value");
-    switch (value.runtimeType) {
-      case String:
-        await sharedPreferences.setString(key, value);
-        break;
-      case int:
-        await sharedPreferences.setInt(key, value);
-        break;
-      case bool:
-        await sharedPreferences.setBool(key, value);
-        break;
-      case double:
-        await sharedPreferences.setDouble(key, value);
-        break;
-      default:
-        return null;
+  static Future<void> setData(String key, dynamic value) async {
+    final sharedPreferences = await SharedPreferences.getInstance();
+
+    debugPrint('SharedPrefHelper : setData with key : $key and value : $value');
+
+    if (value is String) {
+      await sharedPreferences.setString(key, value);
+    } else if (value is int) {
+      await sharedPreferences.setInt(key, value);
+    } else if (value is bool) {
+      await sharedPreferences.setBool(key, value);
+    } else if (value is double) {
+      await sharedPreferences.setDouble(key, value);
     }
   }
 
@@ -74,7 +69,8 @@ class SharedPrefHelper {
   static Future<void> setSecuredString(String key, String value) async {
     const flutterSecureStorage = FlutterSecureStorage();
     debugPrint(
-        "FlutterSecureStorage : setSecuredString with key : $key and value : $value");
+      "FlutterSecureStorage : setSecuredString with key : $key and value : $value",
+    );
     await flutterSecureStorage.write(key: key, value: value);
   }
 
