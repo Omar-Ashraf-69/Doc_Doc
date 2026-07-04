@@ -1,0 +1,43 @@
+name: Android App Distribution using Fastlane using GitHub Actions
+
+on:
+  push:
+    branches:
+      - main
+      - staging
+
+jobs:
+  build-android:
+    name: Build Android APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.19.0'
+          channel: stable
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Analyze code
+        run: flutter analyze
+
+      - name: Run tests
+        run: flutter test
+
+      - name: Build APK
+        run: flutter build apk --releasev --flavor prod -t lib/main_prod.dart
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: android-apk
+          path: build/app/outputs/flutter-apk/app-prod-release.apk\
+      - name: Distribute APK via Firebase
+        run: |
+          firebase appdistribution:distribute build/app/outputs/flutter-apk/app-prod-release.apk \
+            --app ${{ secrets.APP_ID }} \
