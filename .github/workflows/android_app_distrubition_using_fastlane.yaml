@@ -1,0 +1,50 @@
+name: Android App Distribution using Fastlane using GitHub Actions
+
+on:
+  push:
+    branches:
+      - main
+      - staging
+
+jobs:
+  build-android:
+    name: Build Android APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.44.4'
+          channel: stable
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '4.0.5'
+          bundler-cache: true
+          working-directory: android
+
+      - name: Analyze code
+        run: flutter analyze
+
+      - name: Create Firebase service account
+        working-directory: android
+        run: |
+          mkdir -p fastlane
+          cat > fastlane/firebase_service_account.json <<'EOF'
+          ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          EOF
+
+      - name: Distribute APK via Firebase
+        env:
+          APP_ID: ${{ secrets.APP_ID }}
+          SERVICE_CREDENTIALS_FILE: fastlane/firebase_service_account.json
+        run: |
+          bundle exec fastlane android distribute
+        working-directory: android
