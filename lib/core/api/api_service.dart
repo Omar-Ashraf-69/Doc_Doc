@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:doc_doc/core/api/api_cons.dart';
+import 'package:doc_doc/features/home/data/models/specializations_response_model.dart';
 import 'package:doc_doc/features/login/data/models/login_request_model.dart';
 import 'package:doc_doc/features/login/data/models/login_response_model.dart';
 import 'package:doc_doc/features/signup/data/models/sign_up_request_body.dart';
@@ -17,4 +18,7 @@ abstract class ApiService {
 
   @POST(ApiConstants.register)
   Future<SignupResponse> register(@Body() SignupRequestBody signupRequestBody);
+
+  @GET(ApiConstants.fetchDoctors)
+  Future<SpecializationsResponseModel> fetchData();
 }
