@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
-extension Naviagtor on BuildContext {
+extension NavigatorExtension on BuildContext {
   void pop() => Navigator.of(this).pop();
+ //void pop<T extends Object?>([T? result]) =>
+   // Navigator.of(this).pop(result);
   void pushNamed(String routeName, {Object? arguments}) =>
       Navigator.of(this).pushNamed(routeName, arguments: arguments);
   void pushReplacementNamed(String routeName, {Object? arguments}) =>
@@ -13,18 +15,40 @@ extension Naviagtor on BuildContext {
   }) => Navigator.of(
     this,
   ).pushNamedAndRemoveUntil(routeName, predicate, arguments: arguments);
+
+  void pushNamedAndRemoveAll(String routeName, {Object? arguments}) =>
+      Navigator.of(
+        this,
+      ).pushNamedAndRemoveUntil(routeName, (_) => false, arguments: arguments);
 }
 
 extension StringExtension on String? {
-  bool isNullOrEmpty() => this == null || this == "";
+  bool get  isNullOrEmpty => this == null || this!.isEmpty;
 }
 
-
-
 extension ListExtension<T> on List<T>? {
-  bool isNullOrEmpty() => this == null || this!.isEmpty;
+  bool  get isNullOrEmpty => this == null || this!.isEmpty;
 }
 
 extension MapExtension<K, V> on Map<K, V>? {
-  bool isNullOrEmpty() => this == null || this!.isEmpty;
+  bool get isNullOrEmpty => this == null || this!.isEmpty;
+}
+
+extension WidgetExtension on Widget {
+  Widget withPadding(
+    EdgeInsets padding,
+  ) {
+    return Padding(
+      padding: padding,
+      child: this,
+    );
+  }
+}
+
+
+extension ContextExtension
+    on BuildContext {
+
+  Size get size =>
+      MediaQuery.sizeOf(this);
 }

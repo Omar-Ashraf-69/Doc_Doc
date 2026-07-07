@@ -18,7 +18,7 @@ class AppInitializer {
       SharedPrefKeys.userToken,
     );
 
-    if (token.isNotEmpty == true) {
+    if (token.isNotEmpty) {
       return Routes.home;
     }
 

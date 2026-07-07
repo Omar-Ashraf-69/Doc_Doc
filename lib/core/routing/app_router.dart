@@ -11,37 +11,41 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AppRouter {
-  static const String initialRoute = Routes.onBoarding;
   Route? generateRoute(RouteSettings settings) {
     //final arguments = settings.arguments;
     switch (settings.name) {
       case Routes.onBoarding:
-        return MaterialPageRoute(builder: (_) => const OnBoardingView());
+        return _buildRoute(const OnBoardingView());
       case Routes.login:
-        return MaterialPageRoute(
-          builder: (_) => BlocProvider(
-            create: (context) => getIt<LoginCubit>(),
-            child: LoginView(),
-          ),
+        return _buildRoute(
+          BlocProvider(create: (_) => getIt<LoginCubit>(), child: const LoginView()),
         );
+
       case Routes.signUp:
-        return MaterialPageRoute(
-          builder: (_) => BlocProvider(
-            create: (context) => getIt<SignUpCubit>(),
-            child: SignUpView(),
+        return _buildRoute(
+          BlocProvider(
+            create: (_) => getIt<SignUpCubit>(),
+            child:const SignUpView(),
           ),
         );
       case Routes.home:
-        return MaterialPageRoute(
-          builder: (_) => BlocProvider(
+        return _buildRoute(
+          BlocProvider(
             lazy: false,
             create: (_) => getIt<HomeCubit>()..fetchDoctors(),
             child: const HomeView(),
           ),
         );
-
       default:
-        return null;
+        return _buildRoute(
+          Scaffold(
+            body: Center(child: Text('No route defined for ${settings.name}')),
+          ),
+        );
     }
+  }
+
+  Route<dynamic> _buildRoute(Widget page) {
+    return MaterialPageRoute(builder: (_) => page);
   }
 }
