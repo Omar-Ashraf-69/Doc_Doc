@@ -1,3 +1,4 @@
+import 'package:doc_doc/core/api/failure.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'api_result.freezed.dart';
@@ -5,5 +6,5 @@ part 'api_result.freezed.dart';
 class ApiResult<T> with _$ApiResult<T> {
   
   const factory ApiResult.success(T data) = Success<T>;
-  const factory ApiResult.error(String message) = Error<T>;
+  const factory ApiResult.failure(Failure failure) = FailureResult<T>;
 }
