@@ -1,5 +1,4 @@
-name: Android App Distribution using Fastlane using GitHub Actions
-
+name: Android CI/CD Pipeline
 on:
   push:
     branches:
@@ -12,13 +11,31 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
 
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.44.4'
           channel: stable
+          cache: true
+
+      - name: Cache Gradle
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
 
       - name: Install dependencies
         run: flutter pub get
@@ -31,7 +48,10 @@ jobs:
           working-directory: android
 
       - name: Analyze code
-        run: flutter analyze
+        run: flutter analyze --fatal-infos
+
+      # - name: Run Tests
+      #   run: flutter test
 
       - name: Create Firebase service account
         working-directory: android
@@ -40,6 +60,7 @@ jobs:
           cat > fastlane/firebase_service_account.json <<'EOF'
           ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
           EOF
+          
 
       - name: Distribute APK via Firebase
         env:
@@ -48,3 +69,9 @@ jobs:
         run: |
           bundle exec fastlane android distribute
         working-directory: android
+        
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-prod-release
+          path: build/app/outputs/flutter-apk/app-prod-release.apk

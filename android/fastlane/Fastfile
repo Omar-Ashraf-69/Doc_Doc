@@ -3,7 +3,7 @@ default_platform(:android)
 platform :android do
   desc "Distribute a new build to Firebase App Distribution"
   lane :distribute do
-    sh "flutter clean"
+    sh "flutter pub get"
     sh "flutter build apk --release --flavor prod -t lib/main_prod.dart"
     firebase_app_distribution(
     app: ENV["APP_ID"],
@@ -12,7 +12,6 @@ platform :android do
     android_artifact_path: "../build/app/outputs/flutter-apk/app-prod-release.apk",
     release_notes: "New build for testing ✔️🔥",
     testers: "omarbondoah62@gmail.com",
-    debug: true
   )
   end
 end
