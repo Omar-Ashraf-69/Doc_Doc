@@ -13,7 +13,7 @@ class HomeRepo {
       final response = await apiService.fetchData();
       return ApiResult.success(response);
     } catch (e) {
-      return ApiResult.error(ApiErrorHandler.handle(e).message!);
+      return ApiResult.failure(ApiErrorHandler.handle(e));
     }
   }
 }

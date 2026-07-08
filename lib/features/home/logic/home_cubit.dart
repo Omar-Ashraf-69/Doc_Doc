@@ -19,8 +19,8 @@ class HomeCubit extends Cubit<HomeState<SpecializationsResponseModel>> {
         specializationsList = data.specializationDataList;
         emit(Success(data));
       },
-      error: (message) {
-        emit(Failure(message));
+      failure: (failure) {
+        emit(Failure(failure.message));
       },
     );
   }
@@ -29,7 +29,7 @@ class HomeCubit extends Cubit<HomeState<SpecializationsResponseModel>> {
     List<Doctors?>? doctorsList = getDoctorsListBySpecializationId(
       specializationId,
     );
-    if (!doctorsList.isNullOrEmpty()) {
+    if (!doctorsList.isNullOrEmpty) {
       emit(HomeState.doctorsSuccess(doctorsList));
     } else {
       emit(const HomeState.doctorsError());

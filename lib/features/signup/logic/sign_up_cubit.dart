@@ -33,8 +33,8 @@ class SignUpCubit extends Cubit<SignUpStates<SignupResponse>> {
         //await saveUserToken(data.userData?.token ?? '');
         emit(Success(data));
       },
-      error: (message) {
-        emit(Failure(message));
+      failure: (failure) {
+        emit(Failure(failure.message));
       },
     );
   }

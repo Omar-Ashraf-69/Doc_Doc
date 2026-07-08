@@ -7,7 +7,7 @@ import 'package:doc_doc/features/login/data/models/login_response_model.dart';
 class LoginRepo {
   final ApiService _apiService;
 
-  LoginRepo(this._apiService);
+  LoginRepo({ required this._apiService});
 
   Future<ApiResult<LoginResponseModel>> login(
     LoginRequestModel loginRequestModel,
@@ -16,7 +16,7 @@ class LoginRepo {
       final response = await _apiService.login(loginRequestModel);
       return ApiResult.success(response);
     } catch (e) {
-      return ApiResult.error(ApiErrorHandler.handle(e).message!);
+      return ApiResult.failure(ApiErrorHandler.handle(e));
     }
   }
 }
