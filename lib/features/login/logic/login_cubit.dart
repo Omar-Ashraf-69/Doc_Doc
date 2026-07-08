@@ -8,9 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class LoginCubit extends Cubit<LoginState<LoginResponseModel>> {
-  LoginCubit({required LoginRepo repo})
-    : _repo = repo,
-      super(const LoginState.idle());
+  LoginCubit({required this._repo})
+    : super(const LoginState.idle());
 
   final LoginRepo _repo;
 
